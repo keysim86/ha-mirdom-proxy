@@ -1,0 +1,110 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  COMPONENT_NAME: mirdom_proxy
+
+permissions:
+  contents: write
+
+jobs:
+  release-forgejo:
+    if: ${{ !contains(github.server_url, 'github.com') }}
+    name: Prepare Forgejo release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Update manifest version
+        run: |
+          VERSION_NO="${{ steps.version.outputs.VERSION }}"
+          VERSION_NO="${VERSION_NO#v}"
+          python3 -c "
+          import json
+          path = 'custom_components/${{ env.COMPONENT_NAME }}/manifest.json'
+          d = json.load(open(path))
+          d['version'] = '$VERSION_NO'
+          open(path, 'w').write(json.dumps(d, indent=2, ensure_ascii=False) + '\n')
+          "
+
+      - name: Commit updated manifest via API
+        env:
+          FORGEJO_TOKEN: ${{ github.token }}
+        run: |
+          SHA=$(curl -s \
+            "${{ github.server_url }}/api/v1/repos/${{ github.repository }}/contents/custom_components/${{ env.COMPONENT_NAME }}/manifest.json?ref=main" \
+            -H "Authorization: token $FORGEJO_TOKEN" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin).get('sha',''))")
+          CONTENT=$(base64 -w 0 custom_components/${{ env.COMPONENT_NAME }}/manifest.json)
+          curl -s -X PUT \
+            "${{ github.server_url }}/api/v1/repos/${{ github.repository }}/contents/custom_components/${{ env.COMPONENT_NAME }}/manifest.json" \
+            -H "Authorization: token $FORGEJO_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"message\": \"chore: bump manifest version to ${{ steps.version.outputs.VERSION }}\", \"content\": \"$CONTENT\", \"sha\": \"$SHA\", \"branch\": \"main\"}"
+
+      - name: Create zip
+        run: |
+          cd "${{ github.workspace }}/custom_components/${{ env.COMPONENT_NAME }}"
+          zip ${{ env.COMPONENT_NAME }}.zip -r ./
+
+      - name: Create Forgejo Release
+        env:
+          FORGEJO_TOKEN: ${{ github.token }}
+        run: |
+          VERSION_NO="${{ steps.version.outputs.VERSION }}"
+          VERSION_NO="${VERSION_NO#v}"
+          BODY=$(awk "/^## \[$VERSION_NO\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md \
+            | python3 -c "import sys,json; print(json.dumps(sys.stdin.read()))")
+          if echo "$VERSION_NO" | grep -q '-'; then PRERELEASE=true; else PRERELEASE=false; fi
+          RESPONSE=$(curl -s -X POST \
+            "${{ github.server_url }}/api/v1/repos/${{ github.repository }}/releases" \
+            -H "Authorization: token $FORGEJO_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"tag_name\": \"${{ steps.version.outputs.VERSION }}\", \"name\": \"Mirdom Proxy ${{ steps.version.outputs.VERSION }}\", \"body\": $BODY, \"prerelease\": $PRERELEASE}")
+          RELEASE_ID=$(echo "$RESPONSE" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin).get('id',''))")
+          curl -s -X POST \
+            "${{ github.server_url }}/api/v1/repos/${{ github.repository }}/releases/$RELEASE_ID/assets" \
+            -H "Authorization: token $FORGEJO_TOKEN" \
+            -F "attachment=@custom_components/${{ env.COMPONENT_NAME }}/${{ env.COMPONENT_NAME }}.zip"
+
+  release-github:
+    if: ${{ contains(github.server_url, 'github.com') }}
+    name: Prepare GitHub release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create zip
+        run: |
+          cd "${{ github.workspace }}/custom_components/${{ env.COMPONENT_NAME }}"
+          zip ${{ env.COMPONENT_NAME }}.zip -r ./
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          VERSION_NO="${VERSION#v}"
+          BODY=$(awk "/^## \[$VERSION_NO\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md)
+          PRERELEASE_FLAG=""
+          if echo "$VERSION_NO" | grep -q '-'; then PRERELEASE_FLAG="--prerelease"; fi
+          gh release create "$VERSION" \
+            --title "Mirdom Proxy $VERSION" \
+            --notes "$BODY" \
+            $PRERELEASE_FLAG \
+            "custom_components/${{ env.COMPONENT_NAME }}/${{ env.COMPONENT_NAME }}.zip"
