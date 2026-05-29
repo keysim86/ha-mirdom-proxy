@@ -3,6 +3,7 @@
   "name": "Mirdom Proxy",
   "codeowners": ["@keysim86"],
   "documentation": "https://frogejo.keynet.ovh/homelab/ha-mirdom-proxy",
+  "issue_tracker": "https://frogejo.keynet.ovh/homelab/ha-mirdom-proxy/issues",
   "iot_class": "local_push",
   "version": "1.0.0"
 }
