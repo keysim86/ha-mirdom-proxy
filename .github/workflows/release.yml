@@ -51,6 +51,9 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"message\": \"chore: bump manifest version to ${{ steps.version.outputs.VERSION }}\", \"content\": \"$CONTENT\", \"sha\": \"$SHA\", \"branch\": \"main\"}"
 
+      - name: Install zip
+        run: apt-get update && apt-get install -y zip
+
       - name: Create zip
         run: |
           cd "${{ github.workspace }}/custom_components/${{ env.COMPONENT_NAME }}"
