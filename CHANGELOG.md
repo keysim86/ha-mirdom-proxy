@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0-beta.1] - 2026-05-29
+## [1.0.0] - 2026-05-29
 
 ### Added
 - Reverse proxy `/mirdom/{path}` → skonfigurowany `agent_url` (domyślnie `http://localhost:8088`)
