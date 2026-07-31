@@ -1,17 +1,17 @@
 # Mirdom Proxy
 
-Custom component dla Home Assistant. Wystawia reverse proxy pod `/mirdom/` na serwerze HA, przekierowując ruch do lokalnie działającego [Mirdom Agent](https://frogejo.keynet.ovh/keysim/mirdom-agent).
+Custom component dla Home Assistant. Wystawia reverse proxy pod `/mirdom/` na serwerze HA, przekierowując ruch do lokalnie działającego [Mirdom Agent](https://forgejo.keynet.ovh/keysim/mirdom-agent).
 
 Dzięki temu agent jest dostępny zarówno lokalnie, jak i przez tunel Cloudflare — bez osobnego wystawiania portu na zewnątrz. Dostęp chroniony własnym sekretem niezależnym od auth HA.
 
 ## Wymagania
 
 - Home Assistant 2023.1+
-- Działający [Mirdom Agent](https://frogejo.keynet.ovh/keysim/mirdom-agent) dostępny z hosta HA
+- Działający [Mirdom Agent](https://forgejo.keynet.ovh/keysim/mirdom-agent) dostępny z hosta HA
 
 ## Instalacja przez HACS
 
-1. HACS → **Custom repositories** → dodaj `https://frogejo.keynet.ovh/homelab/ha-mirdom-proxy` jako typ **Integration**
+1. HACS → **Custom repositories** → dodaj `https://forgejo.keynet.ovh/homelab/ha-mirdom-proxy` jako typ **Integration**
 2. Znajdź **Mirdom Proxy** w HACS i zainstaluj
 3. Zrestartuj Home Assistant
 
