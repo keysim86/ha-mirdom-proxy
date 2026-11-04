@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-04
+
 ### Added
 - Ikona integracji (`custom_components/mirdom_proxy/brand/icon.png` i `icon@2x.png`) — dom z dymkiem asystenta, w stylu ikony Hearth; Home Assistant pokazuje ją na liście integracji i w Marketplace.
 

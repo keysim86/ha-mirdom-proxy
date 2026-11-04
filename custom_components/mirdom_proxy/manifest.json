@@ -5,5 +5,5 @@
   "documentation": "https://forgejo.keynet.ovh/homelab/ha-mirdom-proxy",
   "issue_tracker": "https://forgejo.keynet.ovh/homelab/ha-mirdom-proxy/issues",
   "iot_class": "local_push",
-  "version": "1.0.0"
+  "version": "1.1.0"
 }
