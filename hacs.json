@@ -1,4 +1,5 @@
 {
   "name": "Mirdom Proxy",
-  "content_in_root": false
+  "content_in_root": false,
+  "homeassistant": "2021.6.0"
 }

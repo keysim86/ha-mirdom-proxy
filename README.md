@@ -2,6 +2,8 @@
 
 [![Release](https://img.shields.io/github/v/release/keysim86/ha-mirdom-proxy?style=flat-square)](https://github.com/keysim86/ha-mirdom-proxy/releases/latest)
 [![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://github.com/keysim86/ha-mirdom-proxy)
+[![HA](https://img.shields.io/badge/Home%20Assistant-2021.6%2B-blue?style=flat-square)](https://www.home-assistant.io/)
+[![License](https://img.shields.io/github/license/keysim86/ha-mirdom-proxy.svg?style=flat-square)](LICENSE)
 
 Custom component dla Home Assistant. Wystawia reverse proxy pod `/mirdom/` na serwerze HA, przekierowując ruch do lokalnie działającego [Mirdom Agent](https://forgejo.keynet.ovh/keysim/mirdom-agent).
 
