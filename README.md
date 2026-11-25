@@ -1,5 +1,8 @@
 # Mirdom Proxy
 
+[![Release](https://img.shields.io/github/v/release/keysim86/ha-mirdom-proxy?style=flat-square)](https://github.com/keysim86/ha-mirdom-proxy/releases/latest)
+[![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg?style=flat-square)](https://github.com/keysim86/ha-mirdom-proxy)
+
 Custom component dla Home Assistant. Wystawia reverse proxy pod `/mirdom/` na serwerze HA, przekierowując ruch do lokalnie działającego [Mirdom Agent](https://forgejo.keynet.ovh/keysim/mirdom-agent).
 
 Dzięki temu agent jest dostępny zarówno lokalnie, jak i przez tunel Cloudflare — bez osobnego wystawiania portu na zewnątrz. Dostęp chroniony własnym sekretem niezależnym od auth HA.
